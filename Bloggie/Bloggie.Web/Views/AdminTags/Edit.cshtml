@@ -1,0 +1,33 @@
+﻿@model Bloggie.Web.Models.View.EditTagRequest
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div>
+    <div class="container">
+        <h1>Edit Tag - Admin Functionality</h1
+    </div>
+    <form method="post">
+        <div class="mb-3">
+            <label asp-for="Id" class="form-label"></label>
+            <input type="text" id="id" class="form-control" asp-for="Id" readonly />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="DisplayName" class="form-label"></label>
+            <input asp-for="DisplayName" class="form-control" value="@Model.DisplayName" />
+            <span asp-validation-for="DisplayName" class="text-danger"></span>
+        </div>
+        <div class="d-flex">
+            <button type="submit" class="btn btn-dark">Edit</button>
+            <button type="submit" class="btn btn-danger ms-2"
+                asp-area="" asp-controller="AdminTags" asp-action="Delete">Delete</button>
+        </div>
+    </form>
+</div>
