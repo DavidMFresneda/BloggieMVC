@@ -1,0 +1,127 @@
+﻿using Bloggie.Web.Models.Domain;
+using Bloggie.Web.Models.View;
+using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace Bloggie.Web.Controllers
+{
+    public class AdminBlogPostsController : Controller
+    {
+        private readonly ITagRepository _tagRepository;
+        private readonly IBlogPostRepository _blogPostRepository;
+
+        public AdminBlogPostsController(ITagRepository tagRepository,
+                                        IBlogPostRepository blogPostRepository)
+        {
+            this._tagRepository = tagRepository;
+            this._blogPostRepository = blogPostRepository;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
+        {
+            //Get Tags From Database
+            var tags = await _tagRepository.GetAllAsync();
+
+            AddBlogPostRequest addBlogPostRequest = new AddBlogPostRequest
+            {
+                Tags = tags.Select(t => new SelectListItem
+                {
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                })
+            };
+
+            return View(addBlogPostRequest);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(AddBlogPostRequest blogPostRequest)
+        {
+            ICollection<Tag> tags = new List<Tag>();
+
+            if (blogPostRequest.SelectedTags != null)
+            {
+                foreach (var tag in blogPostRequest.SelectedTags)
+                {
+                    var tagRepository = await _tagRepository.GetAsync(new Guid(tag));
+
+                    if (tagRepository != null)
+                        tags.Add(tagRepository);
+                }
+            }
+
+
+            await _blogPostRepository.AddAsync(
+                new Models.Domain.BlogPost
+                {
+                    Author = blogPostRequest.Author,
+                    Content = blogPostRequest.Content,
+                    Heading = blogPostRequest.Heading,
+                    PageTitle = blogPostRequest.PageTitle,
+                    PublishedDate = blogPostRequest.PublishedDate,
+                    ShortDescription = blogPostRequest.ShortDescription,
+                    Tags = tags,
+                    UrlHandle = blogPostRequest.UrlHandle,
+                    Visible = blogPostRequest.Visible,
+                    FeaturedImageUrl = blogPostRequest.FeaturedImageUrl
+
+                });
+
+            return RedirectToAction("List");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List()
+        {
+            var listadoBlogs = await _blogPostRepository.GetAllAsync();
+
+            return View(listadoBlogs);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Edit(Guid id)
+        {
+            var blogPost = await _blogPostRepository.GetAsync(id);
+            var tags = await _tagRepository.GetAllAsync();
+            List<SelectListItem> listadoTags = new List<SelectListItem>();
+
+
+            foreach (var tag in blogPost.Tags)
+            {
+                listadoTags.Add(new SelectListItem
+                {
+                    Value = tag.Id.ToString(),
+                    Text = tag.Name
+                });
+            }
+
+            EditBlogPostRequest editBlogPostRequest = new EditBlogPostRequest
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Content = blogPost.Content,
+                Heading = blogPost.Heading,
+                PageTitle = blogPost.PageTitle,
+                PublishedDate = blogPost.PublishedDate,
+                ShortDescription = blogPost.ShortDescription,
+                UrlHandle = blogPost.UrlHandle,
+                Visible = blogPost.Visible,
+                FeaturedImageUrl = blogPost.FeaturedImageUrl,
+                Tags = listadoTags,
+                SelectedTags = blogPost.Tags.Select(t => t.Id.ToString()).ToArray()
+            };
+
+            return View(editBlogPostRequest);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Edit(EditBlogPostRequest editBlogPostRequest)
+        {
+            return View();
+        }
+
+    }
+
+}
