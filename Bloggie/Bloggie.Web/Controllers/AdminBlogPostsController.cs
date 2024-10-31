@@ -119,7 +119,43 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(EditBlogPostRequest editBlogPostRequest)
         {
-            return View();
+            BlogPost blogPost = await _blogPostRepository.GetAsync(editBlogPostRequest.Id);
+
+            blogPost.Id = editBlogPostRequest.Id;
+            blogPost.Author = editBlogPostRequest.Author;
+            blogPost.Content = editBlogPostRequest.Content;
+            blogPost.Heading = editBlogPostRequest.Heading;
+            blogPost.PageTitle = editBlogPostRequest.PageTitle;
+            blogPost.PublishedDate = editBlogPostRequest.PublishedDate;
+            blogPost.ShortDescription = editBlogPostRequest.ShortDescription;
+            blogPost.UrlHandle = editBlogPostRequest.UrlHandle;
+            blogPost.Visible = editBlogPostRequest.Visible;
+            blogPost.FeaturedImageUrl = editBlogPostRequest.FeaturedImageUrl;
+
+            foreach (var tag in editBlogPostRequest.SelectedTags)
+            {
+                var _tag = await _tagRepository.GetAsync(new Guid(tag));
+
+                if (!blogPost.Tags.Contains(_tag))
+                {
+                    blogPost.Tags.Add(_tag);
+                }
+            }
+
+
+            await _blogPostRepository.EditAsync(blogPost);
+
+
+            return RedirectToAction("List");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            await _blogPostRepository.DeleteAsync(id);
+
+            return RedirectToAction("List");
+
         }
 
     }

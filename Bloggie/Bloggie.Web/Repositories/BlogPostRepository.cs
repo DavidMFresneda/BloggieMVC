@@ -24,14 +24,28 @@ namespace Bloggie.Web.Repositories
 
         }
 
-        public Task<BlogPost?> DeleteAsync(Guid id)
+        public async Task<BlogPost?> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var bp = await _blogPostDbContext.BlogPosts.FirstOrDefaultAsync(bp => bp.Id.Equals(id));
+
+            if (bp != null)
+            {
+                _blogPostDbContext.BlogPosts.Remove(bp);
+                await _blogPostDbContext.SaveChangesAsync();
+
+                return bp;
+            }
+
+            return null;
         }
 
-        public Task<BlogPost?> EditAsync(BlogPost blogPost)
+        public async Task<BlogPost?> EditAsync(BlogPost blogPost)
         {
-            throw new NotImplementedException();
+            _blogPostDbContext.Update(blogPost);
+
+            await _blogPostDbContext.SaveChangesAsync();
+
+            return blogPost;
         }
 
         public async Task<IEnumerable<BlogPost>> GetAllAsync()
@@ -47,5 +61,7 @@ namespace Bloggie.Web.Repositories
 
             return blog;
         }
+
+
     }
 }
