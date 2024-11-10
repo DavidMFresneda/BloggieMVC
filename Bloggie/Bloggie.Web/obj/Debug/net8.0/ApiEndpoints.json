@@ -1,12 +1,18 @@
 [
   {
     "ContainingType": "Bloggie.Web.Controllers.ImagesController",
-    "Method": "Index",
+    "Method": "UploadImageAsync",
     "RelativePath": "api/Images",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]
