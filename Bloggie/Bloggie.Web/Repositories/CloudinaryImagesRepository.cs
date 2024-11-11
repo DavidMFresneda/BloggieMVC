@@ -36,7 +36,9 @@ namespace Bloggie.Web.Repositories
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            return uploadResult.JsonObj.ToString();
+            //uploadResult.JsonObj["link"] = uploadResult.JsonObj["url"];
+
+            return uploadResult.JsonObj["url"].ToString();
         }
 
 

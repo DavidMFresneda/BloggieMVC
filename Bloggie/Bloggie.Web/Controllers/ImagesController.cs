@@ -25,7 +25,7 @@ namespace Bloggie.Web.Controllers
                 return Problem("Error!", null, (int)HttpStatusCode.InternalServerError);
             }
 
-            return new JsonResult(result);
+            return new JsonResult(new { link = result });
         }
 
 

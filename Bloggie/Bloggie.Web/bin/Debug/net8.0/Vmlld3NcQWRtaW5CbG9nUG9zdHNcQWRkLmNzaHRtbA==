@@ -74,7 +74,16 @@
 
 @section Scripts {
     <script>
-        const editor = new FroalaEditor('#content');
+        const editor = new FroalaEditor('#content', 
+        {
+            imageUploadURL: '/api/images',
+            events: {
+                    'image.uploaded': function (response) {
+                        // Image was uploaded to the server.
+                        alert(response.link);
+                    },
+            }
+        });
 
 
         const fileComponent = document.getElementById('featuredImageUpload');
