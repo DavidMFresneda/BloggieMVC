@@ -1,8 +1,70 @@
-﻿@{
+﻿@model List<Bloggie.Web.Models.Domain.BlogPost>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container col-xxl-12 px-4 py-5">
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-12 col-lg-6">
+            <h1 class="display-5 fw-bold lh-1 mb-3">
+                Bloggie - The Dev Blog
+            </h1>
+            <p class="lead">
+                Bloggie is the gome to coding blogs covering a vast range of
+                topics like HTML, CSS; javascript, ASP.NET, c#, angular, etc.
+                Want to read the latest dev articles? Join the bloggie app and
+                get weekly blogs in your email.
+            </p>
+        </div>
+        <div class="col-12 col-lg-6">
+            <img width="800" height="600" src="https://images.pexels.com/photos/16347/pexels-photo.jpg" 
+            alt="Bloggie - Dev logs"
+            class="d-block mx-lg-auto img-fluid"/>
+        </div>
+    </div>
+</div>
+
+<div class="container col-lg-8">
+    <div class="row justify-content-center col-lg-4">
+        </div class="col-6">
+        @if(Model!= null && Model.Count > 0)
+        {
+            foreach(var post in Model)
+            {
+                <div class="bg-light mb-5 box-shadow p-5">
+                    <img src="@post.FeaturedImageUrl" alt="@post.Heading"
+                    class="mb-2 d-block img-fluid"/>
+
+                    <h2 class="mb-4" >@post.Heading</h2>
+                    <p class="mb-4">
+                        Author: @post.Author
+                        <br/>
+                        Published Date: @post.PublishedDate.ToShortDateString()
+
+                    </p>
+
+                    <p class="mb-4">
+                        @foreach(var tag in post.Tags)
+                        {
+                    
+                            <p class="badge bg-secondary me-1">@tag.Name</p>
+                        }
+                    </p>
+
+                    <p class="mb-4">
+                        @post.ShortDescription
+                    </p>
+                    <a href="#" class="btn btn-dark">Read More</a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info">
+                No posts found.
+            </div>
+        })
+        </div>
+    </div>
 </div>

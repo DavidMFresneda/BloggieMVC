@@ -88,7 +88,7 @@ namespace Bloggie.Web.Controllers
             List<SelectListItem> listadoTags = new List<SelectListItem>();
 
 
-            foreach (var tag in blogPost.Tags)
+            foreach (var tag in tags)
             {
                 listadoTags.Add(new SelectListItem
                 {
