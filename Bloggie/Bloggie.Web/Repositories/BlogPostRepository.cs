@@ -55,6 +55,17 @@ namespace Bloggie.Web.Repositories
             return blogs;
         }
 
+        public async Task<Bloggie.Web.Models.Domain.BlogPost?> GetByUrlHandleAsync(string urlHandle)
+        {
+            var blog = await _blogPostDbContext.BlogPosts
+                                                .Where(bp => bp.UrlHandle.Equals(urlHandle))
+                                                .Include("Tags")
+                                                .FirstOrDefaultAsync();
+
+            return blog;
+        }
+
+
         public async Task<BlogPost?> GetAsync(Guid id)
         {
             var blog = await _blogPostDbContext.BlogPosts.Include("Tags").FirstOrDefaultAsync(t => t.Id.Equals(id));

@@ -1,4 +1,4 @@
-﻿@model List<Bloggie.Web.Models.Domain.BlogPost>
+﻿@model Bloggie.Web.Models.View.HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -25,12 +25,26 @@
     </div>
 </div>
 
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6 d-flex">
+            @if(@Model!= null && @Model.Tags != null & @Model.Tags.Any())
+            {
+                @foreach(var tag in @Model.Tags)
+                {
+                    <p class="badge bg-dark me-1">@tag.Name</p>
+                }
+            }
+        </div>
+    </div>
+</div>
+
 <div class="container col-lg-8">
     <div class="row justify-content-center col-lg-4">
         </div class="col-6">
-        @if(Model!= null && Model.Count > 0)
+        @if(Model.BlogPosts!= null && Model.BlogPosts.Any())
         {
-            foreach(var post in Model)
+        foreach (var post in Model.BlogPosts)
             {
                 <div class="bg-light mb-5 box-shadow p-5">
                     <img src="@post.FeaturedImageUrl" alt="@post.Heading"
@@ -55,7 +69,12 @@
                     <p class="mb-4">
                         @post.ShortDescription
                     </p>
-                    <a href="#" class="btn btn-dark">Read More</a>
+                    <a 
+                        asp-area="" 
+                        asp-action="Index" 
+                        asp-controller="Blogs" 
+                        asp-route-urlHandle="@post.UrlHandle"
+                        class="btn btn-dark">Read More</a>
                 </div>
             }
         }

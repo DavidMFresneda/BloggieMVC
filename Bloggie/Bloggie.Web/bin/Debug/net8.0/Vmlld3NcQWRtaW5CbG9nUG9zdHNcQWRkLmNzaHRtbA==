@@ -80,7 +80,7 @@
             events: {
                     'image.uploaded': function (response) {
                         // Image was uploaded to the server.
-                        alert(response.link);
+                        //alert(response.link);
                     },
             }
         });
