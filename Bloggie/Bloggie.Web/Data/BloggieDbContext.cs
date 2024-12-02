@@ -4,7 +4,7 @@ namespace Bloggie.Web.Data
 {
     public class BloggieDbContext : DbContext
     {
-        public BloggieDbContext(DbContextOptions options) : base(options)
+        public BloggieDbContext(DbContextOptions<BloggieDbContext> options) : base(options)
         {
 
 

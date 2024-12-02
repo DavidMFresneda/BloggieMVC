@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,29 +33,82 @@
                         <li class="nav-item">
                             <a class="nav-link text-ligth" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item dropdown">
+                       @*  <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Options
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="nav-link text-black dropdown-item" sp-area="" 
-                                    asp-controller="AdminTags" asp-action="Add">Add Tag</a>
-                                </li>
                                 <li><a class="nav-link text-black dropdown-item" asp-area="" 
                                     asp-controller="AdminTags" asp-action="List">Show All Tags</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-black dropdown-item" asp-area=""
-                                       asp-controller="AdminBlogPosts" asp-action="Add">Add BlogPost</a>
-                                </li>
+                                </li>                                
                                 <li>
                                     <a class="nav-link text-black dropdown-item" asp-area=""
                                        asp-controller="AdminBlogPosts" asp-action="List">List BlogPosts</a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> *@
+
+                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                                
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin
+                                </a>
+                                <ul class="dropdown-menu">
+
+                               
+                                        <li>
+                                            <a class="nav-link text-black dropdown-item" sp-area=""
+                                               asp-controller="AdminTags" asp-action="Add">Add Tag</a>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link text-black dropdown-item" asp-area=""
+                                               asp-controller="AdminBlogPosts" asp-action="Add">Add BlogPost</a>
+                                        </li>
+                                
+
+                                    <li>
+                                        <a class="nav-link text-black dropdown-item" asp-area=""
+                                           asp-controller="AdminTags" asp-action="List">Show All Tags</a>
+                                    </li>
+
+                                    <li>
+                                        <a class="nav-link text-black dropdown-item" asp-area=""
+                                           asp-controller="AdminBlogPosts" asp-action="List">List BlogPosts</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
                       
                     </ul>
+
+                    <div class="d-flex align-items-center">
+
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <div class="me-3 text-light">
+                                @User?.Identity?.Name
+                            </div>
+
+                            <a class="btn me-3 bg-light text-dark" asp-area=""
+                               asp-action="Logout"
+                               asp-controller="Account">Logout</a>
+                        }
+                        else
+                        {
+                            <a class="btn me-3 bg-light text-dark" asp-area=""
+                               asp-action="Login"
+                               asp-controller="Account">Login</a>
+
+                            <a class="btn me-3 bg-light text-dark" asp-area=""
+                               asp-action="Register"
+                               asp-controller="Account">Register</a>
+                        }
+
+                        
+                    </div>
+
                 </div>
             </div>
         </nav>

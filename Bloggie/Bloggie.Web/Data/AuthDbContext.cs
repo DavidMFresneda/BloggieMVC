@@ -14,7 +14,7 @@ namespace Bloggie.Web.Data
         private Guid _adminRoleId = new Guid("a5a5a5a5-5a5a-5a5a-5a5a-5a5a5a5a5a5a");
         private Guid _userRoleId = new Guid("c5c5c5c5-5c5c-5c5c-5c5c-5c5c5c5c5c5c");
 
-        public AuthDbContext(DbContextOptions options) : base(options)
+        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
         {
 
 
@@ -28,9 +28,9 @@ namespace Bloggie.Web.Data
             //Seed roles (User, admin, super admin)
             var roles = new List<IdentityRole>
             {
-                new IdentityRole{Name = "User", NormalizedName = "User", Id = _userRoleId, ConcurrencyStamp = _userRoleId.ToString() },
-                new IdentityRole{Name = "Admin", NormalizedName = "Admin", Id = _adminRoleId, ConcurrencyStamp = _adminRoleId.ToString() },
-                new IdentityRole{Name = "SuperAdmin", NormalizedName = "SuperAdmin", Id = _superAdminId, ConcurrencyStamp = _superAdminId.ToString() }
+                new IdentityRole{Name = "User", NormalizedName = "User", Id = _userRoleId.ToString(), ConcurrencyStamp = _userRoleId.ToString() },
+                new IdentityRole{Name = "Admin", NormalizedName = "Admin", Id = _adminRoleId.ToString(), ConcurrencyStamp = _adminRoleId.ToString() },
+                new IdentityRole{Name = "SuperAdmin", NormalizedName = "SuperAdmin", Id = _superAdminRoleId.ToString(), ConcurrencyStamp = _superAdminRoleId.ToString() }
             };
 
             builder.Entity<IdentityRole>().HasData(roles);
@@ -38,7 +38,7 @@ namespace Bloggie.Web.Data
             //Crear superAdmin
             var superAdmin = new IdentityUser
             {
-                Id = _userId.ToString(),
+                Id = _superAdminId.ToString(),
                 UserName = "superadmin@bloggie.com",
                 Email = "superadmin@bloggie.com",
                 NormalizedUserName = "superadmin@bloggie.com".ToUpper(),
