@@ -1,8 +1,10 @@
-﻿@Model Bloggie.Web.Models.Domain.BlogPost
-
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> signInManager
+@inject UserManager<IdentityUser> userManager
+@Model Bloggie.Web.Models.Domain.BlogDetailsViewModel
 
 @{
-    ViewData["Title"] = @Model.PageTitle;
+    ViewData["Title"] = @Model.BlogPost.PageTitle;
 }
 
 <div class="container my-5">
@@ -11,23 +13,41 @@
 
             @if(Model != null)
             {
-                <h1 class="mb-3">@Model.Heading</h1>
+                <h1 class="mb-3">@Model.BlogPost.Heading</h1>
                 <div class="d-flex justify-content-between mb-3">
-                    <span class="text-secondary">@Model.Author</span>
-                    <span class="text-secondary">@Model.PublishedDate.ToShortDateString()</span>
+                    <span class="text-secondary">@Model.BlogPost.Author</span>
+                    <span class="text-secondary">@Model.BlogPost.PublishedDate.ToShortDateString()</span>
+                </div>
+
+                <div class="mb-3">
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <a id="btnLike" style="cursor:pointer;">
+                            @if(@Model.NumLikes > 0)
+                            {
+                                <i class="bi bi-hand-thumbs-up-fill" id="meGusta"></i>
+                            }
+                            else {
+                                <i class="bi bi-hand-thumbs-up" id="meGusta"></i>
+                            }
+                        </a>
+                        <span id="numLikesSpan">@Model.NumLikes Likes</span>
+                        
+                    }
+                    
                 </div>
 
                 <div class="mb-3 d-flex">
-                    @foreach(var tag in Model.Tags)
+                    @foreach (var tag in Model.BlogPost.Tags)
                     {
                         <span class="badge bg-secondary me-1">@tag.Name</span>
                     }
                 </div>
 
-                <img src="@Model.FeaturedImageUrl" class="d-block img-fluid mb-3" />
+                <img src="@Model.BlogPost.FeaturedImageUrl" class="d-block img-fluid mb-3" />
 
                 <div class="mb-3 blog-details-content">
-                    @Html.Raw(@Model.Content)
+                    @Html.Raw(@Model.BlogPost.Content)
                 </div>
 
 
@@ -39,3 +59,65 @@
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <script>
+        const btnLike = window.document.getElementById('btnLike');
+
+        if(btnLike != null)
+            btnLike.addEventListener('click', addLikeForBlog);
+
+        function addLikeForBlog() {
+
+
+            fetch('/api/BlogPostLike/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                },
+                body: JSON.stringify({ BlogPostId: '@Model.BlogPost.Id', UserId: '@userManager.GetUserId(User)' })
+            })
+                .then(response => {
+                    const meGusta = window.document.getElementById('meGusta');
+
+                    meGusta.classList.remove('bi-hand-thumbs-up');
+                    meGusta.classList.add('bi-hand-thumbs-up-fill');
+
+                    pintaTotalLikes();
+                });
+
+        }
+
+
+        function pintaTotalLikes() {
+
+
+            fetch('/api/BlogPostLike/NumLikes/@Model.BlogPost.Id', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                }
+            })
+            .then(response => response.json())
+                .then(result => {
+                    //Actualizo el label de los likes
+                    const numLikesLabel = window.document.getElementById('numLikesSpan');
+                    let totalLikes = result;
+
+                    numLikesLabel.textContent = totalLikes;
+                });
+
+        }
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Your JavaScript code here
+            if(btnLike != null)
+                pintaTotalLikes();
+        });
+
+    </script>
+}
