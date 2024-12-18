@@ -101,6 +101,13 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SubmitTag(AddTagRequest tagRequest)
         {
+            ValidateAddTagRequest(tagRequest);
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             await _tagRepository.AddAsync(
                 new Bloggie.Web.Models.Domain.Tag
                 {
@@ -113,7 +120,12 @@ namespace Bloggie.Web.Controllers
             return RedirectToAction("List");
         }
 
-
-
+        private void ValidateAddTagRequest(AddTagRequest tagRequest)
+        {
+            if (tagRequest.Name.ToUpper().Equals(tagRequest.DisplayName.ToUpper()))
+            {
+                ModelState.AddModelError("DisplayName", "Name can't be the same as DisplayName");
+            }
+        }
     }
 }

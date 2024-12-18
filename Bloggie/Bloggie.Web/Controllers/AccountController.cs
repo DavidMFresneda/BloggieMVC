@@ -25,6 +25,12 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(AccountRegisterPostRequest registerRequest)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             var identityUser = new IdentityUser
             {
                 UserName = registerRequest.UserName,
@@ -61,6 +67,8 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(Models.View.LoginRequest loginRequest)
         {
+            if (!ModelState.IsValid)
+                return View();
 
             var user = await _userManager.FindByNameAsync(loginRequest.UserName);
             if (user == null)
