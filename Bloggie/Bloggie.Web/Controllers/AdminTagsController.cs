@@ -24,9 +24,48 @@ namespace Bloggie.Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string? searchQuery,
+                                                string? sortBy,
+                                                string? sortDirection,
+                                                int pageSize = 3,
+                                                int currentPage = 1)
         {
-            IEnumerable<Tag> tags = await _tagRepository.GetAllAsync();
+
+            var totalRecords = await _tagRepository.CountAsync();
+            var totalPages = (int)Math.Ceiling((decimal)totalRecords / pageSize);
+
+
+
+            if (sortDirection != null)
+            {
+                if (!sortDirection.ToUpper().Equals("ASC"))
+                {
+                    sortDirection = "Asc";
+                }
+                else
+                {
+                    sortDirection = "Dcs";
+                }
+            }
+
+            if (sortDirection == null)
+            {
+                sortDirection = "Asc";
+            }
+
+            if (sortBy == null)
+            {
+                sortBy = "Name";
+            }
+
+
+            ViewBag.TotalPages = totalPages;
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDirection = sortDirection;
+            ViewBag.CurrentPage = currentPage;
+
+            IEnumerable<Tag> tags = await _tagRepository.GetAllAsync(pageSize, currentPage, searchQuery, sortBy, sortDirection);
 
             return View(tags.ToList());
         }

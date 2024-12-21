@@ -12,15 +12,84 @@
     </div>
 </div>
 
-<div class="container py-5">
+<form method="get" asp-controller="AdminTags" 
+asp-action="List">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col col-md-3 d-flex">
+                <input type="text" value="@ViewBag.SearchQuery" 
+                class="form-control" name="searchQuery" />
+                <button type="submit" class="btn btn-warning ms-3">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="container mt-3">
     @if (Model != null && Model.Any())
     {
         <table class="table">
             <thead>
                 <tr>
                     <th>Id</th>
-                    <th>Name</th>
-                    <th>Display Name</th>
+                    <th>
+                        <a class="btn btn-light"  
+                        asp-controller="AdminTags"
+                        asp-action="List"
+                        asp-route-sortBy="Name"
+                        asp-route-searchQuery="@ViewBag.SearchQuery"
+                        asp-route-sortDirection="@ViewBag.SortDirection">
+                            Name
+                        </a>
+                        @if (ViewBag.SortBy != null && 
+                         ViewBag.SortDirection != null && 
+                         ViewBag.SortBy.Equals("Name"))
+                        {
+                            <span>
+                                <span>
+
+                                    @if (ViewBag.SortDirection.ToUpper().Equals("ASC"))
+                                    {
+                                        <i class="bi bi-arrow-up"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-arrow-down"></i>
+                                    }
+
+
+                                </span>
+                            </span>
+                        }
+                    </th>
+                    <th>
+                        <a class="btn btn-light"
+                        asp-controller="AdminTags"
+                        asp-action="List"
+                        asp-route-sortBy="Display Name"
+                        asp-route-searchQuery="@ViewBag.SearchQuery"
+                        asp-route-sortDirection="@ViewBag.SortDirection">
+                            Display Name
+                        </a>
+                        @if (ViewBag.SortBy != null && ViewBag.SortBy.Equals("Display Name"))
+                        {
+                            <span>
+                                <span>
+
+                                    @if (ViewBag.SortDirection.ToUpper().Equals("ASC"))
+                                    {
+                                        <i class="bi bi-arrow-up"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-arrow-down"></i>
+                                    }
+
+                                </span>
+                            </span>
+                        }
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -33,12 +102,30 @@
                         <td>@tag.DisplayName</td>
                         <td>
                             <a asp-area="" asp-controller="AdminTags" asp-action="Edit" asp-route-id="@tag.Id" >Edit</a>
-                           @*  <a asp-area="" asp-controller="AdminTags" asp-action="Delete" asp-route-id="@tag.Id">Delete</a> *@
+                            @*  <a asp-area="" asp-controller="AdminTags" asp-action="Delete" asp-route-id="@tag.Id">Delete</a> *@
                         </td>
                     </tr>
                 }
             </tbody>           
-          </table>
+        </table>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+
+                @if (ViewBag.CurrentPage > 1) {
+                    <li class="page-item"><a class="page-link" asp-route-currentPage="@(ViewBag.CurrentPage - 1)">Previous</a></li>
+                }
+                @for (int pageNumber = 1 ; pageNumber <= ViewBag.totalPages; pageNumber++) {
+                    <li class="page-item">
+                        <a class="page-link" asp-route-currentPage="@pageNumber" >@pageNumber</a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage < ViewBag.totalPages)
+                {
+                    <li class="page-item"><a class="page-link" asp-route-currentPage="@(ViewBag.CurrentPage + 1)">Next</a></li>
+                }
+            </ul>
+        </nav>
     }
     else
     {

@@ -50,11 +50,48 @@ namespace Bloggie.Web.Repositories
             return _tag;
         }
 
-        public async Task<IEnumerable<Tag>> GetAllAsync()
+        public async Task<IEnumerable<Tag>> GetAllAsync(int? pageSize,
+                                                        int? currentPage,
+                                                        string? searchQuery,
+                                                        string? sortBy,
+                                                        string? sortDirection
+                                                        )
         {
-            List<Tag> tags = await _bloggieDbContext.Tags.ToListAsync();
+            var query = _bloggieDbContext.Tags.AsQueryable();
 
-            return tags;
+            //filter by search query
+            if (!(searchQuery == null || string.IsNullOrEmpty(searchQuery)))
+                query = query.Where(t => t.Name.Contains(searchQuery) || t.DisplayName
+                            .Contains(searchQuery)).AsQueryable();
+
+            //sorting
+            if (sortBy != null && sortDirection != null)
+            {
+                if (sortDirection.ToUpper() == "ASC")
+                {
+                    if (sortBy.ToUpper().Equals("NAME"))
+                        query = query.OrderBy(columna => columna.Name).AsQueryable();
+                    else
+                        query = query.OrderBy(columna => columna.DisplayName).AsQueryable();
+                }
+                else
+                {
+                    if (sortBy.ToUpper().Equals("NAME"))
+                        query = query.OrderByDescending(columna => columna.Name).AsQueryable();
+                    else
+                        query = query.OrderByDescending(columna => columna.DisplayName).AsQueryable();
+                }
+            }
+
+            //pagination
+            if (currentPage != null && pageSize != null)
+            {
+                query = query.Skip((currentPage.Value - 1) * pageSize.Value)
+                         .Take(pageSize.Value).AsQueryable();
+            }
+
+
+            return await query.ToListAsync();
         }
 
         public async Task<Tag?> GetAsync(Guid id)
@@ -63,5 +100,11 @@ namespace Bloggie.Web.Repositories
 
             return tags;
         }
+
+        public async Task<int> CountAsync()
+        {
+            return await _bloggieDbContext.Tags.CountAsync();
+        }
+
     }
 }
